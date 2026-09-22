@@ -55,7 +55,7 @@ The blueprint creates:
 
 Both resources are configured on Render's `free` plan by default. Free web services can spin down after inactivity, and Free Render Postgres databases expire after 30 days, so upgrade only when the site is ready for paid production traffic and persistent long-term storage.
 
-Render injects the database connection string into `DATABASE_URL`, runs Alembic migrations before deploy, and serves the API with Uvicorn. During the first Blueprint sync, enter the private values for SMTP, Paystack, and ImgBB when Render prompts for `sync: false` environment variables.
+Render injects the database connection string into `DATABASE_URL`, runs Alembic migrations when the service starts, and serves the API with Uvicorn. During the first Blueprint sync, enter the private values for SMTP, Paystack, and ImgBB when Render prompts for `sync: false` environment variables.
 
 After the backend is deployed, set this value in each Vercel frontend project:
 
