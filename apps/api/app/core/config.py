@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./lubis_dev.db"
     frontend_origins: str = "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003"
     notification_email: str = "hello@lubis.org"
+    resend_api_key: str = ""
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_username: str = ""

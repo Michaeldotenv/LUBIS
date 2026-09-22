@@ -55,7 +55,7 @@ The blueprint creates:
 
 Both resources are configured on Render's `free` plan by default. Free web services can spin down after inactivity, and Free Render Postgres databases expire after 30 days, so upgrade only when the site is ready for paid production traffic and persistent long-term storage.
 
-Render injects the database connection string into `DATABASE_URL`, runs Alembic migrations when the service starts, and serves the API with Uvicorn. During the first Blueprint sync, enter the private values for SMTP, Paystack, and ImgBB when Render prompts for `sync: false` environment variables.
+Render injects the database connection string into `DATABASE_URL`, runs Alembic migrations when the service starts, and serves the API with Uvicorn. During the first Blueprint sync, enter the private values for Resend, Paystack, and ImgBB when Render prompts for `sync: false` environment variables.
 
 After the backend is deployed, set this value in each Vercel frontend project:
 
@@ -83,7 +83,16 @@ The backend includes Paystack transaction initialization, verification, and webh
 
 ## Email Notifications
 
-Contact and inquiry submissions are saved in the database and can also send email notifications. Configure these values in `apps/api/.env`, then restart the API:
+Contact and inquiry submissions are saved in the database and can also send email notifications. Resend is preferred in production because it sends through HTTPS and works on Render's free tier. Configure these values in `apps/api/.env`, then restart the API:
+
+```txt
+NOTIFICATION_EMAIL=hello@lubis.org
+RESEND_API_KEY=re_your_resend_key
+SMTP_FROM_EMAIL=hello@lubis.org
+SMTP_FROM_NAME=Lubis Website
+```
+
+SMTP remains available as a fallback if `RESEND_API_KEY` is not set:
 
 ```txt
 NOTIFICATION_EMAIL=hello@lubis.org

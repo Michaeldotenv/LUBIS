@@ -26,20 +26,12 @@ services:
         value: https://lubis.org,https://www.lubis.org,https://clothing.lubis.org,https://realestate.lubis.org,https://mentalawareness.lubis.org
       - key: NOTIFICATION_EMAIL
         value: hello@lubis.org
-      - key: SMTP_HOST
-        sync: false
-      - key: SMTP_PORT
-        value: "587"
-      - key: SMTP_USERNAME
-        sync: false
-      - key: SMTP_PASSWORD
+      - key: RESEND_API_KEY
         sync: false
       - key: SMTP_FROM_EMAIL
         value: hello@lubis.org
       - key: SMTP_FROM_NAME
         value: Lubis Website
-      - key: SMTP_USE_TLS
-        value: "true"
       - key: PAYSTACK_SECRET_KEY
         sync: false
       - key: PAYSTACK_CALLBACK_URL

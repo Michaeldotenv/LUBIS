@@ -3,6 +3,8 @@ import smtplib
 from email.message import EmailMessage
 from email.utils import formataddr
 
+import httpx
+
 from app.core.config import settings
 from app.schemas.contact import ContactCreate, InquiryCreate
 
@@ -10,11 +12,33 @@ logger = logging.getLogger(__name__)
 
 
 def mail_enabled() -> bool:
-    return bool(settings.smtp_host and settings.notification_email and settings.smtp_from_email)
+    return bool(settings.notification_email and settings.smtp_from_email and (settings.resend_api_key or settings.smtp_host))
 
 
-def send_email(subject: str, body: str, reply_to: str | None = None) -> None:
-    if not mail_enabled():
+def send_resend_email(subject: str, body: str, reply_to: str | None = None) -> None:
+    payload: dict[str, object] = {
+        "from": formataddr((settings.smtp_from_name, settings.smtp_from_email)),
+        "to": [settings.notification_email],
+        "subject": subject,
+        "text": body,
+    }
+    if reply_to:
+        payload["reply_to"] = reply_to
+
+    with httpx.Client(timeout=15) as client:
+        response = client.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {settings.resend_api_key}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+        )
+        response.raise_for_status()
+
+
+def send_smtp_email(subject: str, body: str, reply_to: str | None = None) -> None:
+    if not settings.smtp_host:
         logger.info("SMTP is not configured; skipping email notification for %s", subject)
         return
 
@@ -26,13 +50,24 @@ def send_email(subject: str, body: str, reply_to: str | None = None) -> None:
         message["Reply-To"] = reply_to
     message.set_content(body)
 
+    with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
+        if settings.smtp_use_tls:
+            smtp.starttls()
+        if settings.smtp_username and settings.smtp_password:
+            smtp.login(settings.smtp_username, settings.smtp_password)
+        smtp.send_message(message)
+
+
+def send_email(subject: str, body: str, reply_to: str | None = None) -> None:
+    if not mail_enabled():
+        logger.info("Email notifications are not configured; skipping notification for %s", subject)
+        return
+
     try:
-        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
-            if settings.smtp_use_tls:
-                smtp.starttls()
-            if settings.smtp_username and settings.smtp_password:
-                smtp.login(settings.smtp_username, settings.smtp_password)
-            smtp.send_message(message)
+        if settings.resend_api_key:
+            send_resend_email(subject, body, reply_to)
+            return
+        send_smtp_email(subject, body, reply_to)
     except Exception:
         logger.exception("Could not send email notification for %s", subject)
 
