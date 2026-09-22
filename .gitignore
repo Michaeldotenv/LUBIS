@@ -1,0 +1,15 @@
+.next
+node_modules
+__pycache__
+.pytest_cache
+.ruff_cache
+.venv
+dist
+build
+.env
+.env.*
+!.env.example
+*.pyc
+*.sqlite3
+*.db
+*.tsbuildinfo

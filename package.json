@@ -1,0 +1,24 @@
+{
+  "name": "lubis-platform",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/www",
+    "apps/realestate",
+    "apps/mental-awareness",
+    "apps/clothing"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:www\" \"npm:dev:realestate\" \"npm:dev:mental\" \"npm:dev:clothing\"",
+    "dev:www": "npm --workspace @lubis/www run dev",
+    "dev:realestate": "npm --workspace @lubis/realestate run dev",
+    "dev:mental": "npm --workspace @lubis/mental-awareness run dev",
+    "dev:clothing": "npm --workspace @lubis/clothing run dev",
+    "build": "npm --workspaces run build",
+    "lint": "npm --workspaces run lint",
+    "typecheck": "npm --workspaces run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
