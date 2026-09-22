@@ -3,7 +3,7 @@ services:
     name: lubis-api
     runtime: python
     rootDir: apps/api
-    plan: 0.5c-512mb
+    plan: free
     region: oregon
     buildCommand: pip install -r requirements.txt
     preDeployCommand: alembic upgrade head
@@ -52,7 +52,7 @@ services:
 
 databases:
   - name: lubis-postgres
-    plan: 0.1c-256mb
+    plan: free
     region: oregon
     databaseName: lubis
     user: lubis
