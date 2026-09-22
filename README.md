@@ -44,6 +44,23 @@ Backend URL:
 - API: http://localhost:8000
 - Docs: http://localhost:8000/docs
 
+## Backend Production Blueprint
+
+The repository includes `render.yaml` for provisioning the production FastAPI backend and PostgreSQL database on Render.
+
+The blueprint creates:
+
+- `lubis-api`: FastAPI web service for `api.lubis.org`
+- `lubis-postgres`: managed PostgreSQL database
+
+Render injects the database connection string into `DATABASE_URL`, runs Alembic migrations before deploy, and serves the API with Uvicorn. During the first Blueprint sync, enter the private values for SMTP, Paystack, and ImgBB when Render prompts for `sync: false` environment variables.
+
+After the backend is deployed, set this value in each Vercel frontend project:
+
+```txt
+NEXT_PUBLIC_API_URL=https://api.lubis.org
+```
+
 ## Environment
 
 Production should use PostgreSQL:
